@@ -1,0 +1,220 @@
+#
+# Device        : Xiaomi Mi 5 (gemini)
+# Maintainer    : MOVZX (MOVZX@Telegram.org)
+#
+
+# SPECTRUM KERNEL MANAGER
+# Ramdisk file for profile based kernel management
+# Implimentation inspired by Franco's fku profiles
+
+# Initialization
+on property:sys.boot_completed=1
+    # Set default profile on first boot
+    exec u:r:init:s0 root root -- /init.spectrum.sh
+    exec u:r:su:s0 root root -- /init.spectrum.sh
+    # Enable Spectrum support
+    setprop spectrum.support 1
+
+    setprop persist.spectrum.kernel Darkness
+
+#
+# Darkness Modes
+#
+
+# Balanced (default profile)
+on property:persist.spectrum.profile=0
+    # Set CPU Parameters
+        # Little
+            write /sys/devices/system/cpu/cpu0/online 1
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1593600
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 307200
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/up_rate_limit_us
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+        # Big
+            write /sys/devices/system/cpu/cpu2/online 1
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2150400
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 307200
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/up_rate_limit_us
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor schedutil
+    #
+    # CPU Scheduler
+        write /proc/sys/kernel/sched_boost 0
+    #
+    # Dynamic SchedTune Boost
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_top_app 10
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_rt 30
+    #
+    # Set Adreno GPU
+        write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 624000000
+    #
+    # UFS Tweaks
+        write /sys/module/scsi_mod/parameters/use_blk_mq Y
+        write /sys/devices/soc/624000.ufshc/clkscale_enable 1
+        write /sys/devices/soc/624000.ufshc/clkgate_enable 1
+        write /sys/devices/soc/624000.ufshc/624000.ufshc:ufs_variant/pm_qos_enable 1
+    #
+    # Misc Tweaks
+        write /sys/module/workqueue/parameters/power_efficient Y
+
+# Performance
+on property:persist.spectrum.profile=1
+    # Set CPU Parameters
+        # Little
+            write /sys/devices/system/cpu/cpu0/online 1
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1593600
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 307200
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/up_rate_limit_us
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+        # Big
+            write /sys/devices/system/cpu/cpu2/online 1
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2150400
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 307200
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/up_rate_limit_us
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor schedutil
+    #
+    # CPU Scheduler
+        write /proc/sys/kernel/sched_boost 1
+    #
+    # Dynamic SchedTune Boost
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_top_app 30
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_rt 50
+    #
+    # Set Adreno GPU
+        write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 4
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 214000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 624000000
+    #
+    # UFS Tweaks
+        write /sys/module/scsi_mod/parameters/use_blk_mq Y
+        write /sys/devices/soc/624000.ufshc/clkscale_enable 0
+        write /sys/devices/soc/624000.ufshc/clkgate_enable 0
+        write /sys/devices/soc/624000.ufshc/624000.ufshc:ufs_variant/pm_qos_enable 0
+    #
+    # Misc Tweaks
+        write /sys/module/workqueue/parameters/power_efficient N
+
+# Battery
+on property:persist.spectrum.profile=2
+    # Set CPU Parameters
+        # Little
+            write /sys/devices/system/cpu/cpu0/online 1
+            chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor pwrutilx
+            write /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/down_rate_limit_us 1000
+            write /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/iowait_boost_enable 0
+            write /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/up_rate_limit_us 3000
+        # Big
+            write /sys/devices/system/cpu/cpu2/online 1
+            chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor pwrutilx
+            write /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/down_rate_limit_us 1000
+            write /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/iowait_boost_enable 0
+            write /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/up_rate_limit_us 3000
+    #
+    # CPU Scheduler
+        write /proc/sys/kernel/sched_boost 0
+    #
+    # Dynamic SchedTune Boost
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_top_app 5
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_rt 15
+    #
+    # Set Adreno GPU
+        write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 6
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 401800000
+    #
+    # UFS Tweaks
+        write /sys/module/scsi_mod/parameters/use_blk_mq N
+        write /sys/devices/soc/624000.ufshc/clkscale_enable 1
+        write /sys/devices/soc/624000.ufshc/clkgate_enable 1
+        write /sys/devices/soc/624000.ufshc/624000.ufshc:ufs_variant/pm_qos_enable 1
+    #
+    # Misc Tweaks
+        write /sys/module/workqueue/parameters/power_efficient Y
+
+# Gaming
+on property:persist.spectrum.profile=3
+    # Set CPU Parameters
+        # Little
+            write /sys/devices/system/cpu/cpu0/online 1
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1593600
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 307200
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/up_rate_limit_us
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+        # Big
+            write /sys/devices/system/cpu/cpu2/online 1
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2150400
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 307200
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/down_rate_limit_us
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/iowait_boost_enable
+                chmod 755 /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/up_rate_limit_us
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor schedutil
+    #
+    # CPU Scheduler
+        write /proc/sys/kernel/sched_boost 1
+    #
+    # Dynamic SchedTune Boost
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_top_app 50
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_rt 80
+    #
+    # Set Adreno GPU
+        write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 3
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 315000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 624000000
+    #
+    # UFS Tweaks
+        write /sys/module/scsi_mod/parameters/use_blk_mq Y
+        write /sys/devices/soc/624000.ufshc/clkscale_enable 0
+        write /sys/devices/soc/624000.ufshc/clkgate_enable 0
+        write /sys/devices/soc/624000.ufshc/624000.ufshc:ufs_variant/pm_qos_enable 0
+    #
+    # Misc Tweaks
+        write /sys/module/workqueue/parameters/power_efficient N

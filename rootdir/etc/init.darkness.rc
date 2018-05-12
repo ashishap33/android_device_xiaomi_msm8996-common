@@ -1,0 +1,141 @@
+#
+# Device        : Xiaomi Mi 5 (gemini)
+# Maintainer    : MOVZX (MOVZX@Telegram.org)
+#
+
+on darkness
+    # Bring all CPU Cores to online
+        write /sys/devices/system/cpu/cpu0/online 1
+        write /sys/devices/system/cpu/cpu1/online 1
+        write /sys/devices/system/cpu/cpu2/online 1
+        write /sys/devices/system/cpu/cpu3/online 1
+    #
+    # Set CPU Parameters
+        # Disable thermal hotplug to switch governor
+            write /sys/module/msm_thermal/core_control/enabled 0
+        #
+        # Little
+            write /sys/devices/system/cpu/cpu0/online 1
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1593600
+            write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 307200
+            # SchedUtil
+                write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+                write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 1000
+                write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable 0
+                write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us 250
+            # PwrUtilX
+                write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor pwrutilx
+                write /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/down_rate_limit_us 1000
+                write /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/iowait_boost_enable 0
+                write /sys/devices/system/cpu/cpu0/cpufreq/pwrutilx/up_rate_limit_us 250
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+        # Big
+            write /sys/devices/system/cpu/cpu2/online 1
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2150400
+            write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 307200
+            # SchedUtil
+                write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor schedutil
+                write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us 1000
+                write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable 0
+                write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us 500
+            # PwrUtilX
+                write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor pwrutilx
+                write /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/down_rate_limit_us 1000
+                write /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/iowait_boost_enable 0
+                write /sys/devices/system/cpu/cpu2/cpufreq/pwrutilx/up_rate_limit_us 500
+            # Set Default CPU Governor
+                write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor schedutil
+        #
+        # Re-enable thermal hotplug
+            write /sys/module/msm_thermal/core_control/enabled 1
+    #
+    # CPU Scheduler
+        chmod 755 /proc/sys/kernel/sched_boost
+        write /proc/sys/kernel/sched_boost 0
+    #
+    # Dynamic SchedTune Boost
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_top_app 10
+        write /sys/module/cpu_boost/parameters/dynamic_stune_boost_rt 30
+    #
+    # Set Adreno GPU
+        write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5
+        write /sys/class/kgsl/kgsl-3d0/max_pwrlevel 0
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 624000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
+    #
+    # Set LMK
+        write /sys/module/lowmemorykiller/parameters/debug_level 0
+        write /sys/module/lowmemorykiller/parameters/minfree "21816,29088,36360,43632,50904,65448"
+    #
+    # VM Tweaks
+        write /proc/sys/vm/dirty_background_ratio 70
+        write /proc/sys/vm/dirty_ratio 90
+        write /proc/sys/vm/extra_free_kbytes 24300
+        write /proc/sys/vm/laptop_mode 0
+        write /proc/sys/vm/min_free_kbytes 4096
+        write /proc/sys/vm/oom_kill_allocating_task 0
+        write /proc/sys/vm/overcommit_ratio 80
+        write /proc/sys/vm/swappiness 60
+        write /proc/sys/vm/vfs_cache_pressure 100
+    #
+    # Sound Control
+        write /sys/kernel/sound_control/headphone_gain "8 8"
+        write /sys/kernel/sound_control/mic_gain 5
+        write /sys/kernel/sound_control/speaker_gain 13
+    #
+    # Set I/O Scheduler
+        setprop sys.io.scheduler fiops
+        # SDA
+        write /sys/block/sda/queue/iostats 0
+        write /sys/block/sda/queue/read_ahead_kb 512
+        write /sys/block/sda/queue/scheduler fiops
+        # SDE
+        write /sys/block/sde/queue/iostats 0
+        write /sys/block/sde/queue/read_ahead_kb 512
+        write /sys/block/sde/queue/scheduler fiops
+        # DM-0
+        write /sys/block/dm-0/queue/iostats 0
+        write /sys/block/dm-0/queue/read_ahead_kb 512
+        write /sys/block/dm-0/queue/scheduler fiops
+    #
+    # UFS Tweaks
+        write /sys/module/scsi_mod/parameters/use_blk_mq Y
+        write /sys/devices/soc/624000.ufshc/clkgate_enable 1
+        write /sys/devices/soc/624000.ufshc/clkscale_enable 1
+        write /sys/devices/soc/624000.ufshc/624000.ufshc:ufs_variant/pm_qos_enable 1
+    #
+    # Misc Tweaks
+        write /sys/module/workqueue/parameters/power_efficient Y
+        write /sys/module/sync/parameters/fsync_enabled N
+        write /sys/module/qpnp_smbcharger/parameters/default_hvdcp_icl_ma 1500
+        write /sys/module/qpnp_smbcharger/parameters/default_hvdcp3_icl_ma 2700
+        write /sys/module/battery_current_limit/parameters/low_battery_value 1
+        chmod 755 /sys/module/msm_thermal/vdd_restriction/enabled
+        write /sys/module/msm_thermal/vdd_restriction/enabled 0
+        chmod 444 /sys/module/msm_thermal/vdd_restriction/enabled
+        write /sys/module/msm_thermal/parameters/enabled N
+        write /sys/kernel/fp_boost/enabled 1
+    #
+    # Darkness Mods
+        setprop net.hostname Darkness
+        setprop ro.data.large_tcp_window_size true
+        setprop wifi.supplicant_scan_interval 3600
+        setprop persist.sys.use_16bpp_alpha 1
+        setprop persist.sys.scrollingcache 1
+        setprop ro.min.fling_velocity 160
+        setprop ro.max.fling_velocity 20000
+        setprop persist.sys.purgeable_assets 1
+        setprop ro.sys.fw.dex2oat_thread_count 4
+        setprop dalvik.vm.dex2oat-threads 4
+        setprop dalvik.vm.image-dex2oat-threads 4
+        setprop debug.generate-debug-info false
+        setprop sys.use_fifo_ui 1
+        setprop ro.sys.sdcardfs true
+        setprop i_hate_miui true
+        setprop google_is_spying_on_us true
+        setprop fuck_russian_government true
+        setprop send_bobs_and_vegena true
+
+on property:dev.bootcomplete=1
+    trigger darkness
